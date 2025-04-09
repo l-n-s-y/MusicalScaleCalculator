@@ -230,6 +230,7 @@ def main():
             print(m,scale,f"[ CORRECT: {tests[m]} ]"," [X] Failed.")
 
 
+    print()
     for s in minor_scales:
         scale = generate_scale(tonic,mod,s)
 
