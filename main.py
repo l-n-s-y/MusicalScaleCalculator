@@ -1,6 +1,6 @@
 # given a tonic note, list the scales of every mode it is a part of
 
-import sys
+import sys,re
 
 
 modes = {
@@ -194,36 +194,54 @@ def generate_scale(tonic, mod, mode): # mod is # or b ig, idk
 
     return scale
 
-if len(sys.argv) != 2 and "--debug" not in sys.argv:
-    print(f"USAGE: python3 {sys.argv[0]} TONIC")
-    exit()
+def is_valid_tonic(t):
+    regex = "[A-G]{1}[b,#,x]*"
+    matcha = re.search(regex,t)
+    if not matcha:
+        return False
 
-tonic = sys.argv[1]
+    if matcha.start() == 0 and matcha.end() == len(t):
+        return True
 
-mod = tonic[1:]
-
-for m in modes:
-    scale = generate_scale(tonic,mod,m)
-    if "--debug" not in sys.argv:
-        print(m," : ",scale)
-        continue
-
-    if scale == tests[m]:
-        print(m," : ",scale," [O] Passed.")
-    else:
-        print(m,scale,f"[ CORRECT: {tests[m]} ]"," [X] Failed.")
+    return False   
 
 
-print()
-for s in minor_scales:
-    scale = generate_scale(tonic,mod,s)
+def main():
+    if len(sys.argv) != 2 and "--debug" not in sys.argv:
+        print(f"USAGE: python3 {sys.argv[0]} TONIC")
+        exit()
 
-    if "--debug" not in sys.argv:
-        print(s," : ",scale)
-        continue
+    tonic = sys.argv[1]
+    if not is_valid_tonic(tonic):
+        print("ERROR: malformed input")
+        exit()
 
-    if scale == tests[s]:
-        print(s," : ",scale," [O] Passed.")
-    else:
-        print(s,scale,f"[ CORRECT: {tests[m]} ]"," [X] Failed.")
+    mod = tonic[1:]
 
+    for m in modes:
+        scale = generate_scale(tonic,mod,m)
+        if "--debug" not in sys.argv:
+            print(m," : ",scale)
+            continue
+
+        if scale == tests[m]:
+            print(m," : ",scale," [O] Passed.")
+        else:
+            print(m,scale,f"[ CORRECT: {tests[m]} ]"," [X] Failed.")
+
+
+    for s in minor_scales:
+        scale = generate_scale(tonic,mod,s)
+
+        if "--debug" not in sys.argv:
+            print(s," : ",scale)
+            continue
+
+        if scale == tests[s]:
+            print(s," : ",scale," [O] Passed.")
+        else:
+            print(s,scale,f"[ CORRECT: {tests[m]} ]"," [X] Failed.")
+
+
+if __name__ == "__main__":
+    main()
